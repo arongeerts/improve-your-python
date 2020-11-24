@@ -26,13 +26,13 @@ class TodoListController:
         :param name: the name of the TodoList
         :return: The TodoList
         """
-        l = self.lists.get(name)
-        if not l:
+        list_ = self.lists.get(self.__to_key(name))
+        if not list_:
             raise HTTPException(
                 404,
                 f"No TODO list with name {name}"
             )
-        return l
+        return list_
 
     def create_list(self, name, description) -> TodoList:
         """
@@ -47,7 +47,7 @@ class TodoListController:
                 409,
                 f"TODO list with name {name} already exists"
             )
-        self.lists[name] = t
+        self.lists[self.__to_key(name)] = t
         return t
 
     def delete_list(self, name: str) -> None:
@@ -57,7 +57,7 @@ class TodoListController:
         :return:
         """
         if name in self.lists:
-            del self.lists[name]
+            del self.lists[self.__to_key(name)]
         else:
             raise HTTPException(
                 404,
@@ -84,3 +84,12 @@ class TodoListController:
         """
         todo_list = self.get_list(list_name)
         todo_list.delete_item(index)
+
+    @staticmethod
+    def __to_key(name: str) -> str:
+        """
+        Create a key without spaces that can be used as a URL parameter
+        :param name: The original name of the TodoList
+        :return:
+        """
+        return name.replace(" ", "-")
