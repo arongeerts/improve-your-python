@@ -32,7 +32,7 @@ def get_lists():
     lists = controller.get_lists()
     return {
         "statusCode": 200,
-        "body": json.dumps([list_.dict() for list_ in lists])
+        "body": [list_.dict() for list_ in lists]
     }
 
 
@@ -50,7 +50,7 @@ def create_list():
 def get_list(list_name: str):
     return {
         "statusCode": 200,
-        "body": controller.get_list(list_name).json()
+        "body": controller.get_list(list_name).dict()
     }
 
 
