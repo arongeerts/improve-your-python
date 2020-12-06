@@ -28,25 +28,19 @@ class TodoListController:
         """
         list_ = self.lists.get(self.__to_key(name))
         if not list_:
-            raise HTTPException(
-                404,
-                f"No TODO list with name {name}"
-            )
+            raise HTTPException(404, f"No TODO list with name {name}")
         return list_
 
-    def create_list(self, name, description) -> TodoList:
+    def create_list(self, name) -> TodoList:
         """
         Create a new TodoList
         :param name: The name of the list
         :param description: the description
         :return: A new Todo List
         """
-        t = TodoList(name, description)
+        t = TodoList(name, [])
         if name in self.lists:
-            raise HTTPException(
-                409,
-                f"TODO list with name {name} already exists"
-            )
+            raise HTTPException(409, f"TODO list with name {name} already exists")
         self.lists[self.__to_key(name)] = t
         return t
 
@@ -56,13 +50,11 @@ class TodoListController:
         :param name:
         :return:
         """
-        if name in self.lists:
-            del self.lists[self.__to_key(name)]
+        key = self.__to_key(name)
+        if key in self.lists:
+            del self.lists[key]
         else:
-            raise HTTPException(
-                404,
-                f"No TODO list with name {name}"
-            )
+            raise HTTPException(404, f"No TODO list with name {name}")
 
     def add_item(self, list_name: str, item_name: str, item_description: str) -> None:
         """

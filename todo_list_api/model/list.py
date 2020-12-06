@@ -16,10 +16,7 @@ class TodoList:
         Return a dict from the current TodoList
         :return: A Dictionary
         """
-        return {
-            "name": self.name,
-            "items": [i.dict() for i in self.items]
-        }
+        return {"name": self.name, "items": [i.dict() for i in self.items]}
 
     def json(self):
         """
@@ -35,7 +32,9 @@ class TodoList:
         :param s: The JSON representation of the TodoList
         :return: A TodoList object
         """
-        return cls(**json.loads(s))
+        d = json.loads(s)
+        items = [Item(**d["items"][i]) for i in range(len(d["items"]))]
+        return cls(name=d["name"], items=items)
 
     def add_item(self, item: Item):
         """
@@ -52,3 +51,8 @@ class TodoList:
         :return:
         """
         del self.items[index]
+
+    def __eq__(self, other):
+        if not isinstance(other, TodoList):
+            return False
+        return self.json() == other.json()

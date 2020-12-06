@@ -14,10 +14,7 @@ class Item:
         Create a dictionary from the given item
         :return: A dictionary
         """
-        return {
-            "name": self.name,
-            "description": self.description
-        }
+        return {"name": self.name, "description": self.description}
 
     def json(self) -> str:
         """
