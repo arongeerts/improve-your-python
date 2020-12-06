@@ -30,7 +30,7 @@ def get_lists():
 @app.route("/lists", methods=["POST"])
 def create_list():
     data = json.loads(request.data.decode("utf-8"))
-    controller.create_list(data["name"], [])
+    controller.create_list(data["name"])
     return {"statusCode": 200, "body": "Created"}
 
 

@@ -2,19 +2,9 @@ from unittest import TestCase
 
 from todo_list_api.controller import TodoListController
 from todo_list_api.exceptions import HTTPException
-from todo_list_api.model.item import Item
-from todo_list_api.model.list import TodoList
 
 
 class TestController(TestCase):
-    example_list = TodoList(
-        name="My Todo list",
-        items=[
-            Item(name="Item 1", description="The first item on the list"),
-            Item(name="Item 2", description="The second item on the list"),
-        ],
-    )
-
     def test_create_list(self):
         controller = TodoListController()
         controller.create_list("A test list")
