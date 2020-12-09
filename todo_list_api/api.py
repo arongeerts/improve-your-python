@@ -34,7 +34,7 @@ def create_list():
     return {"statusCode": 200, "body": "Created"}
 
 
-@app.route("/lists/<list_name>", methods=["GET"])
+@app.route("/lists/<list_name>/item", methods=["GET"])
 def get_list(list_name: str):
     return {"statusCode": 200, "body": controller.get_list(list_name).dict()}
 
@@ -45,14 +45,14 @@ def delete_list(list_name: str):
     return {"statusCode": 200, "body": "Deleted"}
 
 
-@app.route("/lists/<list_name>", methods=["POST"])
+@app.route("/lists/<list_name>/item", methods=["POST"])
 def add_item(list_name):
     data = json.loads(request.data.decode("utf-8"))
     controller.add_item(list_name, data["name"], data["description"])
     return {"statusCode": 200, "body": "Added"}
 
 
-@app.route("/lists/<list_name>/<index>", methods=["DELETE"])
+@app.route("/lists/<list_name>/item/<index>", methods=["DELETE"])
 def delete_item(list_name, index):
     controller.delete_item(list_name, int(index))
     return {"statusCode": 200, "body": "Deleted"}
