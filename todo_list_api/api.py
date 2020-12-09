@@ -1,4 +1,5 @@
 import json
+import traceback
 
 from flask import Flask, request
 
@@ -11,6 +12,11 @@ app = Flask(__name__)
 @app.errorhandler(HTTPException)
 def handle_error(error):
     return {"statusCode": error.status_code, "body": error.reason}
+
+
+@app.errorhandler(Exception)
+def handle_unknown_exception(error):
+    traceback.print_exc()
 
 
 controller = TodoListController()
