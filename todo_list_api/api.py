@@ -34,7 +34,7 @@ def create_list():
     return {"statusCode": 200, "body": "Created"}
 
 
-@app.route("/lists/<list_name>/item", methods=["GET"])
+@app.route("/lists/<list_name>", methods=["GET"])
 def get_list(list_name: str):
     return {"statusCode": 200, "body": controller.get_list(list_name).dict()}
 
