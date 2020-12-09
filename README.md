@@ -1,6 +1,19 @@
 # poetry-demo
 An example project used to explain the most important features of Poetry. In this example, we build an API for managing TODO lists.
 
+
+## Run
+```
+docker build -t todo . 
+docker run -it -p 5000:5000 todo
+```
+
+## Test
+
+```
+docker build -t todo . 
+docker run todo python -m unittest
+```
 ## Usage
 
 These calls can be made using curl to test the api

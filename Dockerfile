@@ -11,4 +11,4 @@ EXPOSE 5000
 
 ENV PYTHONPATH $PYTHONPATH:/code
 
-ENTRYPOINT python todo_list_api/api.py
+CMD python todo_list_api/api.py
