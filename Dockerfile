@@ -1,9 +1,12 @@
 FROM python:3.7
 
 WORKDIR /code
-COPY requirements.txt ./requirements.txt
 
-RUN pip install -r requirements.txt
+COPY pyproject.toml pyproject.toml
+COPY poetry.lock poetry.lock
+
+RUN pip install poetry==1.1.4
+RUN poetry install
 
 COPY . .
 

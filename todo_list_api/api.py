@@ -11,7 +11,7 @@ app = Flask(__name__)
 
 @app.errorhandler(HTTPException)
 def handle_error(error):
-    return {"statusCode": error.status_code, "body": error.reason}
+    return {"statusCode": error.status_code, "body": error.reason}, error.status_code
 
 
 @app.errorhandler(Exception)
