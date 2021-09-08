@@ -1,17 +1,19 @@
-from typing import Dict, List
+from typing import List, Dict
 
-from todo_list_api.exceptions import HTTPException
+from todo_list_api.app.exceptions import HTTPException, ListNotFoundException
+from todo_list_api.db.interface import DataBase
 from todo_list_api.model.item import Item
 from todo_list_api.model.list import TodoList
 
 
-class TodoListController:
-    """
-    A helper class that makes it easy to retrieve and store new TodoLists
-    """
-
+class InMemoryDatabase(DataBase):
     def __init__(self):
+        super().__init__()
         self.lists: Dict[str, TodoList] = {}  # stored by name
+
+        """
+        An in-memory database implementation for storing TodoList's
+        """
 
     def get_lists(self) -> List[TodoList]:
         """
@@ -28,14 +30,13 @@ class TodoListController:
         """
         list_ = self.lists.get(self.__to_key(name))
         if not list_:
-            raise HTTPException(404, f"No TODO list with name {name}")
+            raise ListNotFoundException(name)
         return list_
 
     def create_list(self, name) -> TodoList:
         """
         Create a new TodoList
         :param name: The name of the list
-        :param description: the description
         :return: A new Todo List
         """
         t = TodoList(name, [])
@@ -54,7 +55,7 @@ class TodoListController:
         if key in self.lists:
             del self.lists[key]
         else:
-            raise HTTPException(404, f"No TODO list with name {name}")
+            raise ListNotFoundException(name)
 
     def add_item(self, list_name: str, item_name: str, item_description: str) -> None:
         """
@@ -67,15 +68,17 @@ class TodoListController:
         todo_list = self.get_list(list_name)
         todo_list.add_item(Item(item_name, item_description))
 
-    def delete_item(self, list_name: str, index: int) -> None:
+    def delete_item(self, list_name: str, item_name: str) -> None:
         """
         Delete an item from a TodoList
         :param list_name: The name of the list
-        :param index: The index of the item in the list
+        :param item_name: The name of the item
         :return: None
         """
         todo_list = self.get_list(list_name)
-        todo_list.delete_item(index)
+        for index, item in enumerate(todo_list.items):
+            if item.name == item_name:
+                todo_list.delete_item(index)
 
     @staticmethod
     def __to_key(name: str) -> str:
@@ -85,3 +88,6 @@ class TodoListController:
         :return:
         """
         return name.replace(" ", "-")
+
+    def setup(self):
+        pass

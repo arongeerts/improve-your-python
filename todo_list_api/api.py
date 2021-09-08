@@ -3,10 +3,16 @@ import traceback
 
 from flask import Flask, request
 
-from todo_list_api.controller import TodoListController
-from todo_list_api.exceptions import HTTPException
+from todo_list_api.app.controller import TodoListController
+from todo_list_api.app.exceptions import HTTPException
+from todo_list_api.db.interface import DataBase
 
 app = Flask(__name__)
+
+
+@app.errorhandler(404)
+def not_found(error):
+    return {"statusCode": 404, "body": "Not Found"}, 404
 
 
 @app.errorhandler(HTTPException)
@@ -14,17 +20,22 @@ def handle_error(error):
     return {"statusCode": error.status_code, "body": error.reason}, error.status_code
 
 
-@app.errorhandler(Exception)
+@app.errorhandler(500)
 def handle_unknown_exception(error):
     traceback.print_exc()
+    return {"statusCode": 500, "body": "Whoops, something went wrong!"}, 500
 
 
-controller = TodoListController()
+database = DataBase.initialize()  # The type will dynamically be chosen
+controller = TodoListController(database)
 
 
 @app.route("/")
 def landing_page():
-    return {"statusCode": 200, "body": "Hello, welcome to the Todo list app!"}
+    return {
+        "statusCode": 200,
+        "body": f"Hello, welcome to the Todo list app! I am backed by {database.__class__.__name__}",
+    }
 
 
 @app.route("/lists", methods=["GET"])
@@ -58,9 +69,9 @@ def add_item(list_name):
     return {"statusCode": 200, "body": "Added"}
 
 
-@app.route("/lists/<list_name>/item/<index>", methods=["DELETE"])
-def delete_item(list_name, index):
-    controller.delete_item(list_name, int(index))
+@app.route("/lists/<list_name>/item/<item_name>", methods=["DELETE"])
+def delete_item(list_name, item_name):
+    controller.delete_item(list_name, item_name)
     return {"statusCode": 200, "body": "Deleted"}
 
 

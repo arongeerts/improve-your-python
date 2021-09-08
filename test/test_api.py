@@ -53,7 +53,7 @@ class TestApi(TestCase):
         lists = response.json["body"]
         items = lists["items"]
         self.assertEqual(len(items), 1)
-        client.delete("/lists/A-list/item/0")
+        client.delete("/lists/A-list/item/An Item")
         response = client.get("/lists/A-list")
         self.assertEqual(response.status_code, 200)
         lists = response.json["body"]
