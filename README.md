@@ -1,20 +1,66 @@
-# poetry-demo
+# Improving your Python skills
 
-An example project used to explain the most important features of Poetry. In this example, we build an API for managing TODO lists.
+This project is used as a demo going along with a presentation on how to take your Python skills to the next level.
+It is meant for people that already have some Python experience, but are unaware of some best practices and patterns, 
+that may improve the quality of their code.
 
+In this example, we build an API for managing TODO lists.
 
-## Run
+## What it is
+
+This project consists of a TODO-list API with a built-int plugin system. The plugin system allows you to change the 
+database backend that is used in the project, without having to change code. 
+All you have to do is install the plugin as a package and 
+set an environment variable to indicate which backend you want to use.
+
+3 Backends are available for the underlying database:
+* An in-memory key-value store
+* A MySQL database
+* A DynamoDB table
+
+With these different backends, we want to show design patterns for interfacing and 
+a pattern to dynamically import classes to allow interchangeable modules.
+
+## The docker-compose file
+
+The project can be ran locally using the `docker-compose.yml` file in the project root. 
+This compose file will spin up 5 containers.
+
+* The API with in-memory database at http://localhost:5000
+* The API with MySQL database at http://localhost:5001
+* The API with DynamoDB database at http://localhost:5002
+* A MySQL database 
+* Localstack with DynamoDB enabled
+
+You can then run
 ```
-docker build -t todo . 
-docker run -it -p 5000:5000 todo
+docker-compose up
 ```
+to set up the full stack.
+
+## Plugin system
+
+We use a plugin system to demonstrate the 
+[Interface design pattern](http://best-practice-software-engineering.ifs.tuwien.ac.at/patterns/interface.html).
+The goal of this pattern is to allow flexible implementation of a static contract between two modules. 
+In this case, the modules are the database and the application controller. 
+The database implementation is abstracted away using an Abstract Base Class (ABC). 
+The API will then dynamically import the correct implementing class based 
+on the `TODO_LIST_DB_IMPLEMENTATION` environment variable, which is a reference to the class that is intended as DB.
+
+We want to show here that the controller does not care about what the backend is, 
+all it needs is to respect the contract that is defined by the Database interface.
+
+These types of implementations allow for flexible evolution of systems. 
+Thinking about interfaces first, rather than implementations, forces us to thing more conceptually 
+and removes the focus from technology-specific details.
 
 ## Test
 
 ```
-docker build -t todo . 
-docker run todo python -m unittest
+python -m unittest
 ```
+
 ## Usage
 
 These calls can be made using curl to test the api
@@ -33,25 +79,10 @@ curl http://localhost:5000/lists
 curl http://localhost:5000/lists/My-todo-list
 
 # Delete an item from the list
-curl -X DELETE http://localhost:5000/lists/My-todo-list/0
+curl -X DELETE http://localhost:5000/lists/My-todo-list/task1
 
 # Delete the complete list
 curl -X DELETE http://localhost:5000/lists/My-todo-list
 ```
-=======
-An example project used to explain the most important features of Poetry
 
-## Windows
-How to run on windows:
-0.  For the bellow commands I use powershell. CMD should work as well but is not recommended.
-1.  Make sure python3.9 or higher is installed on your machine. (https://www.python.org/downloads/)
-2.  Prepare your environment by running ```.\prep_win_env.ps1``` 
-    It will install Poetry on your system, together with a windows wrapper to make a virtual environment.
-    Poetry will also be installed in that virtual environment.
-3.  You have now entered a virtual environment provisioned with the Poetry dependencies needed for you project.
-4.  You can add or remove dependencies by running ```poetry add <packagename>``` or ```poetry remove <packagename>``` .
-5.  Poetry will resolve dependencies for you while also preventing package conflicts.
-6.  To reload your environment after you added/removed dependencies first run ```deactivate``` , remove the "venv" folder and then run step 2 again.
-7.  Included in this project is a small API that shows a working application - it will use the dependencies managed by poetry. 
-    Execute the file to see it's output. (It needs valid AWS creds)
-
+There is also a script included `scripts/insert_data.py` to insert some dummy data in all API's
